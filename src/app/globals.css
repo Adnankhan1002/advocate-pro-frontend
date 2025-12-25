@@ -1,26 +1,170 @@
 @import "tailwindcss";
 
+/* ===================================
+   ADVOCATE PRO - PREMIUM DESIGN SYSTEM
+   Modern Legal-Tech SaaS Platform
+   =================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Primary Colors - Deep Navy/Indigo for trust and professionalism */
+  --primary: 222 47% 11%;           /* Deep Navy #0F172A */
+  --primary-foreground: 210 40% 98%;
+  
+  /* Secondary Colors - Cool Gray slate tones */
+  --secondary: 215 20% 65%;         /* Cool Gray */
+  --secondary-foreground: 222 47% 11%;
+  
+  /* Accent - Muted Gold for legal prestige */
+  --accent: 45 76% 60%;             /* Muted Gold #E6B84A */
+  --accent-subtle: 45 76% 95%;
+  --accent-foreground: 222 47% 11%;
+  
+  /* Emerald accent alternative */
+  --emerald: 160 84% 39%;           /* Professional Emerald */
+  --emerald-foreground: 0 0% 100%;
+  
+  /* Backgrounds - Soft off-white */
+  --background: 210 20% 98%;        /* Off-white #F8FAFC */
+  --foreground: 222 47% 11%;
+  
+  /* Card and Surface */
+  --card: 0 0% 100%;                /* Pure white cards */
+  --card-foreground: 222 47% 11%;
+  
+  /* Muted elements */
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215 16% 47%;
+  
+  /* Borders - Subtle */
+  --border: 214 32% 91%;            /* Light slate border */
+  --input: 214 32% 91%;
+  --ring: 222 47% 11%;
+  
+  /* Popover */
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  
+  /* Destructive */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  
+  /* Success */
+  --success: 160 84% 39%;
+  --success-foreground: 0 0% 100%;
+  
+  /* Warning */
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 100%;
+  
+  /* Border Radius - Modern rounded corners */
+  --radius-sm: 0.5rem;
+  --radius: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  
+  /* Shadows - Soft and layered */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    color: hsl(var(--foreground));
+  }
+  
+  h1 { font-size: 2.5rem; line-height: 1.2; }
+  h2 { font-size: 2rem; line-height: 1.25; }
+  h3 { font-size: 1.5rem; line-height: 1.33; }
+  h4 { font-size: 1.25rem; line-height: 1.4; }
+  h5 { font-size: 1.125rem; line-height: 1.5; }
+  h6 { font-size: 1rem; line-height: 1.5; }
+  
+  @media (min-width: 1024px) {
+    h1 { font-size: 3rem; }
+    h2 { font-size: 2.5rem; }
+    h3 { font-size: 2rem; }
+    h4 { font-size: 1.5rem; }
+    h5 { font-size: 1.25rem; }
+    h6 { font-size: 1.125rem; }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ===================================
+   SCROLLBAR STYLING
+   =================================== */
+
+* {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(215 16% 47% / 0.3);
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(215 16% 47% / 0.5);
+  background-clip: padding-box;
+}
+
+/* ===================================
+   UTILITY CLASSES
+   =================================== */
+
+@layer utilities {
+  .glass-effect {
+    @apply bg-white/80 backdrop-blur-xl border border-slate-200/50;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 bg-clip-text text-transparent;
+  }
+  
+  .animate-in {
+    animation: slideUpFadeIn 0.5s ease-out;
+  }
+  
+  @keyframes slideUpFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }

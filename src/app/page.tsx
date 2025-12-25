@@ -1,65 +1,213 @@
-import Image from "next/image";
+'use client';
+
+import React from 'react';
+import { motion, Variants } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
+import { 
+  Scale, 
+  Briefcase, 
+  Users, 
+  Calendar, 
+  FileText, 
+  Clock,
+  ArrowRight,
+  Shield,
+  Bell,
+  Folder
+} from 'lucide-react';
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5 },
+  },
+};
+
+const features = [
+  {
+    icon: Briefcase,
+    title: 'Case Management',
+    description: 'Organize and track all your legal cases in one place',
+    href: '/cases',
+  },
+  {
+    icon: Users,
+    title: 'Client Management',
+    description: 'Maintain comprehensive client profiles and relationships',
+    href: '/clients',
+  },
+  {
+    icon: Calendar,
+    title: 'Hearing Schedule',
+    description: 'Never miss a court date with our calendar system',
+    href: '/hearings',
+  },
+  {
+    icon: FileText,
+    title: 'Document Storage',
+    description: 'Securely store and manage all case documents',
+    href: '/documents',
+  },
+  {
+    icon: Clock,
+    title: 'Multiple Diaries',
+    description: 'Track tasks, meetings, expenses, and important dates',
+    href: '/diaries',
+  },
+  {
+    icon: Shield,
+    title: 'Secure & Compliant',
+    description: 'Bank-grade security for your sensitive legal data',
+    href: '/dashboard',
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="flex min-h-screen flex-col">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+        <div className="container mx-auto px-4 py-20 sm:py-28">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+            className="mx-auto max-w-4xl text-center"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <motion.div variants={itemVariants} className="mb-6 inline-flex items-center gap-2">
+              <Scale className="h-10 w-10 text-slate-900 dark:text-slate-100" />
+              <span className="text-4xl font-bold text-slate-900 dark:text-slate-100">
+                Advocate Pro
+              </span>
+            </motion.div>
+            
+            <motion.h1 
+              variants={itemVariants}
+              className="mb-6 text-5xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-6xl"
+            >
+              Complete Legal Practice Management
+            </motion.h1>
+            
+            <motion.p 
+              variants={itemVariants}
+              className="mb-10 text-xl text-slate-600 dark:text-slate-400"
+            >
+              Streamline your legal practice with our comprehensive case management system.
+              Manage cases, clients, hearings, and documents all in one place.
+            </motion.p>
+
+            <motion.div 
+              variants={itemVariants}
+              className="flex flex-col gap-4 sm:flex-row sm:justify-center"
+            >
+              <Button asChild size="lg" className="gap-2 text-base">
+                <Link href="/dashboard">
+                  Go to Dashboard
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="gap-2 text-base">
+                <Link href="/cases">
+                  View Cases
+                </Link>
+              </Button>
+            </motion.div>
+          </motion.div>
         </div>
-      </main>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 bg-white dark:bg-slate-900">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={containerVariants}
+          >
+            <motion.div variants={itemVariants} className="mb-16 text-center">
+              <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-slate-100 sm:text-4xl">
+                Everything You Need
+              </h2>
+              <p className="mx-auto max-w-2xl text-lg text-slate-600 dark:text-slate-400">
+                Powerful features designed specifically for legal professionals
+              </p>
+            </motion.div>
+
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {features.map((feature, index) => {
+                const Icon = feature.icon;
+                return (
+                  <motion.div key={index} variants={itemVariants}>
+                    <Link href={feature.href}>
+                      <Card className="group h-full transition-all hover:shadow-lg hover:border-slate-400 dark:hover:border-slate-600 cursor-pointer">
+                        <CardHeader>
+                          <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 group-hover:bg-slate-900 dark:group-hover:bg-slate-700 transition-colors">
+                            <Icon className="h-6 w-6 text-slate-900 dark:text-slate-100 group-hover:text-white" />
+                          </div>
+                          <CardTitle className="text-xl">{feature.title}</CardTitle>
+                          <CardDescription className="text-base">
+                            {feature.description}
+                          </CardDescription>
+                        </CardHeader>
+                      </Card>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-slate-900 dark:bg-slate-950">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={containerVariants}
+            className="mx-auto max-w-3xl text-center"
+          >
+            <motion.h2 
+              variants={itemVariants}
+              className="mb-6 text-3xl font-bold text-white sm:text-4xl"
+            >
+              Ready to get started?
+            </motion.h2>
+            <motion.p 
+              variants={itemVariants}
+              className="mb-10 text-lg text-slate-300"
+            >
+              Access your dashboard and start managing your legal practice more efficiently today.
+            </motion.p>
+            <motion.div variants={itemVariants}>
+              <Button asChild size="lg" variant="secondary" className="gap-2 text-base">
+                <Link href="/dashboard">
+                  <Folder className="h-4 w-4" />
+                  Open Dashboard
+                </Link>
+              </Button>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
     </div>
   );
 }
