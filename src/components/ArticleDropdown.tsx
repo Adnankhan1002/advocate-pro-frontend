@@ -51,9 +51,9 @@ export const ArticleDropdown: React.FC<ArticleDropdownProps> = ({
       setFilteredArticles(articles);
     } else {
       const filtered = articles.filter(article =>
-        article.article_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        article.simplified_explanation?.toLowerCase().includes(searchQuery.toLowerCase())
+        article.article_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        article.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (article.simplified_explanation && article.simplified_explanation.toLowerCase().includes(searchQuery.toLowerCase()))
       );
       setFilteredArticles(filtered);
     }
