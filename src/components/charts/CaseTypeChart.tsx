@@ -8,6 +8,7 @@ interface CaseTypeChartProps {
   data?: {
     type: string;
     count: number;
+    color?: string;
   }[];
 }
 
