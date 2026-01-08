@@ -21,6 +21,7 @@ import {
   Eye,
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,6 +31,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -48,6 +55,8 @@ export default function ClientsPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('active');
+  const [selectedClient, setSelectedClient] = useState<any>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { data: clientsData } = useClients(page, 12, status, search);
   const deleteClientMutation = useDeleteClient();
   const { user } = useAuthStore();
@@ -89,197 +98,231 @@ export default function ClientsPage() {
           </Link>
         </motion.div>
 
-        {/* Search and Filters */}
+        {/* Quote Banner */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="space-y-4"
+          className="flex justify-center"
         >
-          {/* Search Bar */}
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-            <Input
-              placeholder="Search clients by name, email, or phone..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="pl-12 h-12 bg-white border-slate-200 shadow-sm"
-            />
-          </div>
-
-          {/* Status Filters */}
-          <div className="flex gap-2">
-            {['active', 'inactive', 'archived'].map((s) => (
-              <Button
-                key={s}
-                size="sm"
-                variant={status === s ? 'default' : 'outline'}
-                onClick={() => {
-                  setStatus(s);
-                  setPage(1);
-                }}
-                className="capitalize rounded-full"
-              >
-                {s}
-              </Button>
-            ))}
+          <div className="bg-gradient-to-r from-slate-600 via-blue-900 to-violet-400 px-8 py-8 rounded-3xl shadow-2xl shadow-purple-500/20">
+            <p className="text-xl lg:text-2xl font-serif italic text-white text-center max-w-3xl leading-relaxed">
+              "Client handling, once a challenge for advocates, is now seamless—transforming how legal practice works."
+            </p>
           </div>
         </motion.div>
 
-        {/* Clients Grid */}
-        {clientsData?.data && clientsData.data.length > 0 ? (
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-          >
-            {clientsData.data.map((client: any) => (
-              <motion.div key={client._id} variants={itemVariants}>
-                <Card className="group border-0 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 h-full overflow-hidden">
-                  {/* Status indicator bar */}
-                  <div className={`h-1 ${
-                    client.status === 'active' 
-                      ? 'bg-emerald-500' 
-                      : client.status === 'inactive'
-                      ? 'bg-amber-500'
-                      : 'bg-slate-400'
-                  }`} />
+        {/* Image */}
+        
 
-                  <CardContent className="p-4 space-y-3">
-                    {/* Header with Avatar */}
-                    <div className="flex items-start gap-3">
-                      <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-slate-700 via-slate-600 to-slate-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                        {client.firstName?.charAt(0)}{client.lastName?.charAt(0)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-base text-slate-900 truncate group-hover:text-slate-700">
-                          {client.firstName} {client.lastName}
-                        </h3>
-                        <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5">
-                          {client.category === 'individual' ? (
-                            <><User className="h-3 w-3" /> Individual</>
-                          ) : (
-                            <><Building2 className="h-3 w-3" /> {client.category}</>
+        {/* Search and Filters */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="space-y-3"
+        >
+          {/* Filter Box */}
+          <Card className="border-0 shadow-sm">
+            <CardContent className="p-6 space-y-4">
+              {/* Search Bar */}
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <Input
+                  placeholder="Search clients by name, email, or phone..."
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(1);
+                  }}
+                  className="pl-12 h-12 bg-white border-slate-200 shadow-sm"
+                />
+              </div>
+
+              {/* Status Filters */}
+              <div className="flex gap-2">
+                {['active', 'inactive', 'archived'].map((s) => (
+                  <Button
+                    key={s}
+                    size="sm"
+                    variant={status === s ? 'default' : 'outline'}
+                    onClick={() => {
+                      setStatus(s);
+                      setPage(1);
+                    }}
+                    className="capitalize rounded-full"
+                  >
+                    {s}
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Clients Table */}
+        {clientsData?.data && clientsData.data.length > 0 ? (
+          <Card className="border-0 shadow-lg overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Client</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Contact</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Address</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Financial</th>
+                    <th className="px-6 py-4 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-slate-100">
+                  {clientsData.data.map((client: any, index: number) => (
+                    <motion.tr 
+                      key={client._id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="hover:bg-slate-50 transition-colors"
+                    >
+                      {/* Client Name & Avatar */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                            {client.firstName?.charAt(0)}{client.lastName?.charAt(0)}
+                          </div>
+                          <div>
+                            <div className="font-semibold text-slate-900">
+                              {client.firstName} {client.lastName}
+                            </div>
+                            <div className="flex items-center gap-1 text-xs text-slate-500">
+                              {client.category === 'individual' ? (
+                                <><User className="h-3 w-3" /> Individual</>
+                              ) : (
+                                <><Building2 className="h-3 w-3" /> {client.category}</>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Contact */}
+                      <td className="px-6 py-4">
+                        <div className="space-y-1">
+                          {client.phone && (
+                            <div className="flex items-center gap-2 text-sm text-slate-600">
+                              <Phone className="h-3.5 w-3.5 text-slate-400" />
+                              {client.phone}
+                            </div>
+                          )}
+                          {client.email && (
+                            <div className="flex items-center gap-2 text-sm text-slate-600 truncate max-w-xs">
+                              <Mail className="h-3.5 w-3.5 text-slate-400" />
+                              <span className="truncate">{client.email}</span>
+                            </div>
                           )}
                         </div>
-                      </div>
-                    </div>
+                      </td>
 
-                    {/* Contact Info */}
-                    <div className="space-y-1.5">
-                      {client.email && (
-                        <div className="flex items-center gap-2 text-xs text-slate-600">
-                          <Mail className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
-                          <span className="truncate">{client.email}</span>
-                        </div>
-                      )}
-                      {client.phone && (
-                        <div className="flex items-center gap-2 text-xs text-slate-600">
-                          <Phone className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
-                          <span>{client.phone}</span>
-                        </div>
-                      )}
-                      {client.address?.city && (
-                        <div className="flex items-center gap-2 text-xs text-slate-600">
-                          <MapPin className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
-                          <span className="truncate">
-                            {client.address.city}, {client.address.state}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Financial Info */}
-                    {(client.totalAmount > 0 || client.amountPaid > 0) && (
-                      <div className="pt-2 border-t border-slate-100 space-y-1">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-slate-500">Total Amount:</span>
-                          <span className="font-semibold text-slate-700">₹{client.totalAmount?.toLocaleString() || 0}</span>
-                        </div>
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-slate-500">Amount Paid:</span>
-                          <span className="font-semibold text-green-600">₹{client.amountPaid?.toLocaleString() || 0}</span>
-                        </div>
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-slate-500">Remaining:</span>
-                          <span className={`font-bold ${client.amountRemaining > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                            ₹{client.amountRemaining?.toLocaleString() || 0}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Status Badge */}
-                    <div className="pt-1">
-                      <Badge 
-                        variant="outline" 
-                        className={`text-xs px-2 py-0.5 ${
-                          client.status === 'active'
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                            : client.status === 'inactive'
-                            ? 'bg-amber-50 text-amber-700 border-amber-200'
-                            : 'bg-slate-50 text-slate-700 border-slate-200'
-                        }`}
-                      >
-                        {client.status}
-                      </Badge>
-                    </div>
-
-                    {/* Actions Footer */}
-                    <div className="flex gap-2 pt-2">
-                      <Link href={`/clients/${client._id}`} className="flex-1">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          className="w-full h-8 text-xs"
-                        >
-                          <Eye className="h-3 w-3 mr-1" /> View
-                        </Button>
-                      </Link>
-                      {canDelete && (
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              className="h-8 w-8 p-0 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent className="bg-white border-slate-200">
-                            <AlertDialogTitle>Delete Client</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete {client.firstName} {client.lastName}? This action cannot be undone.
-                            </AlertDialogDescription>
-                            <div className="flex gap-2 justify-end">
-                              <AlertDialogCancel className="bg-slate-200" disabled={deleteClientMutation.isPending}>
-                                Cancel
-                              </AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                handleDelete(client._id);
-                                }}
-                                className="bg-red-600 hover:bg-red-700"
-                                disabled={deleteClientMutation.isPending}
-                              >
-                                {deleteClientMutation.isPending ? 'Deleting...' : 'Delete'}
-                              </AlertDialogAction>
+                      {/* Address */}
+                      <td className="px-6 py-4">
+                        {client.address?.city && (
+                          <div className="flex items-center gap-2 text-sm text-slate-600">
+                            <MapPin className="h-3.5 w-3.5 text-slate-400" />
+                            <span>{client.address.city}, {client.address.state}</span>
                           </div>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
+                        )}
+                      </td>
+
+                      {/* Status */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <Badge 
+                          variant="outline" 
+                          className={`text-xs px-3 py-1 rounded-full ${
+                            client.status === 'active'
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              : client.status === 'inactive'
+                              ? 'bg-amber-50 text-amber-700 border-amber-200'
+                              : 'bg-slate-50 text-slate-700 border-slate-200'
+                          }`}
+                        >
+                          {client.status}
+                        </Badge>
+                      </td>
+
+                      {/* Financial */}
+                      <td className="px-6 py-4">
+                        {(client.totalAmount > 0 || client.amountPaid > 0) ? (
+                          <div className="space-y-1 text-xs">
+                            <div className="text-slate-600">
+                              Total: <span className="font-semibold text-slate-900">₹{client.totalAmount?.toLocaleString() || 0}</span>
+                            </div>
+                            <div className="text-slate-600">
+                              Remaining: <span className={`font-bold ${
+                                client.amountRemaining > 0 ? 'text-red-600' : 'text-green-600'
+                              }`}>₹{client.amountRemaining?.toLocaleString() || 0}</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-slate-400 text-xs">N/A</span>
+                        )}
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedClient(client);
+                              setIsDialogOpen(true);
+                            }}
+                            className="h-8 w-8 p-0 hover:bg-indigo-50 hover:text-indigo-600"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          {canDelete && (
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent className="bg-white border-slate-200">
+                                <AlertDialogTitle>Delete Client</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to delete {client.firstName} {client.lastName}? This action cannot be undone.
+                                </AlertDialogDescription>
+                                <div className="flex gap-2 justify-end">
+                                  <AlertDialogCancel className="bg-slate-200" disabled={deleteClientMutation.isPending}>
+                                    Cancel
+                                  </AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      handleDelete(client._id);
+                                    }}
+                                    className="bg-red-600 hover:bg-red-700"
+                                    disabled={deleteClientMutation.isPending}
+                                  >
+                                    {deleteClientMutation.isPending ? 'Deleting...' : 'Delete'}
+                                  </AlertDialogAction>
+                                </div>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          )}
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
         ) : (
           <Card className="border-0 shadow-lg">
             <CardContent className="text-center py-16">
@@ -341,6 +384,122 @@ export default function ClientsPage() {
             </Button>
           </motion.div>
         )}
+
+        {/* Client Details Dialog */}
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+            {selectedClient && (
+              <>
+                <DialogHeader>
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl">
+                      {selectedClient.firstName?.charAt(0)}{selectedClient.lastName?.charAt(0)}
+                    </div>
+                    <div>
+                      <DialogTitle className="text-2xl font-bold text-slate-900">
+                        {selectedClient.firstName} {selectedClient.lastName}
+                      </DialogTitle>
+                      <div className="flex items-center gap-2 mt-1">
+                        {selectedClient.category === 'individual' ? (
+                          <><User className="h-4 w-4 text-slate-500" /> <span className="text-sm text-slate-600">Individual</span></>
+                        ) : (
+                          <><Building2 className="h-4 w-4 text-slate-500" /> <span className="text-sm text-slate-600">{selectedClient.category}</span></>
+                        )}
+                        <Badge 
+                          variant="outline" 
+                          className={`ml-2 ${
+                            selectedClient.status === 'active'
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              : selectedClient.status === 'inactive'
+                              ? 'bg-amber-50 text-amber-700 border-amber-200'
+                              : 'bg-slate-50 text-slate-700 border-slate-200'
+                          }`}
+                        >
+                          {selectedClient.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                </DialogHeader>
+
+                <div className="space-y-6 mt-6">
+                  {/* Contact Information */}
+                  <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-4 border border-indigo-100">
+                    <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-indigo-600" />
+                      Contact Information
+                    </h3>
+                    <div className="space-y-2 text-sm">
+                      {selectedClient.email && (
+                        <div className="flex items-center gap-2">
+                          <Mail className="h-4 w-4 text-slate-400" />
+                          <span className="text-slate-700">{selectedClient.email}</span>
+                        </div>
+                      )}
+                      {selectedClient.phone && (
+                        <div className="flex items-center gap-2">
+                          <Phone className="h-4 w-4 text-slate-400" />
+                          <span className="text-slate-700">{selectedClient.phone}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Address Information */}
+                  {selectedClient.address && (
+                    <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-100">
+                      <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-blue-600" />
+                        Address
+                      </h3>
+                      <div className="text-sm text-slate-700">
+                        {selectedClient.address.street && <div>{selectedClient.address.street}</div>}
+                        <div>
+                          {selectedClient.address.city}{selectedClient.address.state && `, ${selectedClient.address.state}`}
+                          {selectedClient.address.zipCode && ` - ${selectedClient.address.zipCode}`}
+                        </div>
+                        {selectedClient.address.country && <div>{selectedClient.address.country}</div>}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Financial Information */}
+                  {(selectedClient.totalAmount > 0 || selectedClient.amountPaid > 0) && (
+                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
+                      <h3 className="font-semibold text-slate-900 mb-3">Financial Details</h3>
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center py-2 border-b border-green-100">
+                          <span className="text-sm text-slate-600">Total Amount</span>
+                          <span className="font-semibold text-slate-900">₹{selectedClient.totalAmount?.toLocaleString() || 0}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-2 border-b border-green-100">
+                          <span className="text-sm text-slate-600">Amount Paid</span>
+                          <span className="font-semibold text-green-600">₹{selectedClient.amountPaid?.toLocaleString() || 0}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-2">
+                          <span className="text-sm text-slate-600">Remaining</span>
+                          <span className={`font-bold text-lg ${
+                            selectedClient.amountRemaining > 0 ? 'text-red-600' : 'text-green-600'
+                          }`}>
+                            ₹{selectedClient.amountRemaining?.toLocaleString() || 0}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Notes */}
+                  {selectedClient.notes && (
+                    <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
+                      <h3 className="font-semibold text-slate-900 mb-2">Notes</h3>
+                      <p className="text-sm text-slate-700 whitespace-pre-wrap">{selectedClient.notes}</p>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

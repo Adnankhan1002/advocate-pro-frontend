@@ -1,10 +1,11 @@
 'use client';
 
 import React from 'react';
-import { motion, Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   Scale, 
   Briefcase, 
@@ -18,7 +19,7 @@ import {
   Folder
 } from 'lucide-react';
 
-const containerVariants: Variants = {
+const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -29,12 +30,12 @@ const containerVariants: Variants = {
   },
 };
 
-const itemVariants: Variants = {
+const itemVariants = {
   hidden: { opacity: 0, y: 30 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5 },
+    transition: { duration: 0.5, ease: 'easeOut' },
   },
 };
 
@@ -126,6 +127,24 @@ export default function Home() {
                   View Cases
                 </Link>
               </Button>
+            </motion.div>
+
+            {/* Hero Image */}
+            <motion.div 
+              variants={itemVariants}
+              className="mt-16 flex justify-center"
+            >
+              <div className="relative">
+                <Image 
+                  src="/images/clients-office.jpg" 
+                  alt="Legal Practice Management" 
+                  width={600} 
+                  height={450}
+                  className="object-cover rounded-3xl shadow-2xl"
+                  priority
+                />
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-slate-900/20 to-transparent" />
+              </div>
             </motion.div>
           </motion.div>
         </div>

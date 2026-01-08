@@ -29,6 +29,7 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { formatDate } from '@/lib/utils';
+import Image from 'next/image';
 import {
   Dialog,
   DialogContent,
@@ -68,6 +69,19 @@ const priorityColors: Record<string, string> = {
   medium: 'bg-yellow-100 text-yellow-700 border-yellow-200',
   low: 'bg-green-100 text-green-700 border-green-200',
 };
+
+const cardColors = [
+  { bar: 'bg-blue-500', bg: 'from-blue-50/50 to-blue-100/30', border: 'border-blue-200/40' },
+  { bar: 'bg-amber-500', bg: 'from-amber-50/50 to-amber-100/30', border: 'border-amber-200/40' },
+  { bar: 'bg-green-500', bg: 'from-green-50/50 to-green-100/30', border: 'border-green-200/40' },
+  { bar: 'bg-purple-500', bg: 'from-purple-50/50 to-purple-100/30', border: 'border-purple-200/40' },
+  { bar: 'bg-pink-500', bg: 'from-pink-50/50 to-pink-100/30', border: 'border-pink-200/40' },
+  { bar: 'bg-indigo-500', bg: 'from-indigo-50/50 to-indigo-100/30', border: 'border-indigo-200/40' },
+  { bar: 'bg-rose-500', bg: 'from-rose-50/50 to-rose-100/30', border: 'border-rose-200/40' },
+  { bar: 'bg-teal-500', bg: 'from-teal-50/50 to-teal-100/30', border: 'border-teal-200/40' },
+  { bar: 'bg-cyan-500', bg: 'from-cyan-50/50 to-cyan-100/30', border: 'border-cyan-200/40' },
+  { bar: 'bg-violet-500', bg: 'from-violet-50/50 to-violet-100/30', border: 'border-violet-200/40' },
+];
 
 export default function CasesPage() {
   const router = useRouter();
@@ -125,19 +139,28 @@ export default function CasesPage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+          className="space-y-4"
         >
-          <div>
-            <h1 className="text-4xl lg:text-5xl font-bold text-slate-900">Cases</h1>
-            <p className="text-lg text-slate-600 mt-1">
-              {casesData?.pagination?.total || 0} total cases
-            </p>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-4xl lg:text-5xl font-bold text-slate-900">Cases</h1>
+              <p className="text-lg text-slate-600 mt-1">
+                {casesData?.pagination?.total || 0} total cases
+              </p>
+            </div>
+            <Link href="/cases/new">
+              <Button className="gap-2 bg-slate-900 hover:bg-slate-800 text-white h-11 px-6">
+                <Plus className="h-5 w-5" /> New Case
+              </Button>
+            </Link>
           </div>
-          <Link href="/cases/new">
-            <Button className="gap-2 bg-slate-900 hover:bg-slate-800 text-white h-11 px-6">
-              <Plus className="h-5 w-5" /> New Case
-            </Button>
-          </Link>
+          <div className="flex justify-center">
+            <div className="bg-gradient-to-r from-slate-500 via-blue-900 to-violet-200 px-1 py-6 rounded-2xl shadow-lg">
+              <p className="text-xl lg:text-2xl font-serif italic text-white text-center max-w-3xl leading-relaxed">
+                "When case management becomes effortless, advocacy evolves—and the future changes forever."
+              </p>
+            </div>
+          </div>
         </motion.div>
 
         {/* Search and Filters */}
@@ -175,10 +198,20 @@ export default function CasesPage() {
           </div>
 
           {/* Filter Pills */}
-          <Card className="border-0 shadow-sm">
+          <Card className="border-0 shadow-sm relative overflow-hidden">
             <CardContent className="p-4 space-y-4">
+              {/* Decorative Image */}
+              <div className="absolute -right-8 top-1/2 -translate-y-1/2 pointer-events-none hidden lg:block">
+                <Image 
+                  src="/images/cases.png" 
+                  alt="Cases" 
+                  width={250} 
+                  height={250}
+                  className="object-contain rounded-3xl"
+                />
+              </div>
               {/* Status Filters */}
-              <div>
+              <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-2">
                   <Filter className="h-4 w-4 text-slate-600" />
                   <p className="text-xs font-semibold text-slate-700 uppercase">Status</p>
@@ -213,7 +246,7 @@ export default function CasesPage() {
               </div>
 
               {/* Type Filters */}
-              <div>
+              <div className="relative z-10">
                 <p className="text-xs font-semibold text-slate-700 uppercase mb-2">Type</p>
                 <div className="flex flex-wrap gap-2">
                   <Button
@@ -259,44 +292,52 @@ export default function CasesPage() {
                 : 'space-y-4'
             }
           >
-            {casesData.data.map((caseItem: any) => (
+            {casesData.data.map((caseItem: any, index: number) => {
+              const colorScheme = cardColors[index % cardColors.length];
+              return (
               <motion.div key={caseItem._id} variants={itemVariants}>
                 <Card 
-                  className="group border-0 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 h-full cursor-pointer overflow-hidden"
+                  className={`group relative border ${colorScheme.border} shadow-md hover:shadow-xl transition-all duration-300 h-full cursor-pointer overflow-hidden rounded-2xl bg-gradient-to-br ${colorScheme.bg} to-white`}
                   onClick={() => handleViewCase(caseItem._id)}
                 >
                   {/* Status indicator bar */}
                   <div
-                    className={`h-1 ${statusColors[caseItem.status]?.split(' ')[0] || 'bg-slate-500'}`}
+                    className={`h-1.5 ${colorScheme.bar} rounded-t-2xl`}
                   />
 
-                  <CardContent className="p-6 space-y-4">
+                  <CardContent className="p-3 space-y-2">
                     {/* Header */}
-                    <div className="flex items-start justify-between">
+                    <div className="flex items-start justify-between gap-2">
                       <div className="space-y-1 flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <Briefcase className="h-4 w-4 text-slate-400 flex-shrink-0" />
-                          <span className="text-sm font-semibold text-slate-900">
+                        <div className="flex items-center gap-1.5">
+                          <div className="p-1 bg-indigo-100 rounded-lg">
+                            <Briefcase className="h-3 w-3 text-indigo-600" />
+                          </div>
+                          <span className="text-xs font-bold text-indigo-600">
                             {caseItem.caseNumber}
                           </span>
                         </div>
-                        <h3 className="font-bold text-lg text-slate-900 line-clamp-2 group-hover:text-slate-700">
+                        <h3 className="font-bold text-sm text-slate-900 line-clamp-2">
                           {caseItem.title}
                         </h3>
                       </div>
-                      <Eye className="h-5 w-5 text-slate-400 group-hover:text-slate-900 transition-all flex-shrink-0 mt-1" />
+                      <button className="p-1.5 rounded-full bg-slate-100 hover:bg-indigo-100 transition-colors shrink-0">
+                        <Eye className="h-3.5 w-3.5 text-slate-600 group-hover:text-indigo-600 transition-colors" />
+                      </button>
                     </div>
 
                       {/* Client Information */}
                       {caseItem.clientId && (
-                        <div className="space-y-2 p-3 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100">
-                          <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                            <User className="h-4 w-4 text-blue-600" />
-                            <span>
+                        <div className="space-y-1.5 p-2.5 rounded-lg bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100">
+                          <div className="flex items-center gap-1.5">
+                            <div className="p-1 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full">
+                              <User className="h-2.5 w-2.5 text-white" />
+                            </div>
+                            <span className="text-xs font-bold text-slate-900">
                               {caseItem.clientId.firstName} {caseItem.clientId.lastName}
                             </span>
                           </div>
-                          <div className="text-xs text-slate-600 space-y-1 ml-6">
+                          <div className="text-[10px] text-slate-600 space-y-0.5 pl-0.5">
                             {caseItem.clientId._id && (
                               <div>ID: <span className="font-mono">{caseItem.clientId._id.slice(-8)}</span></div>
                             )}
@@ -312,26 +353,26 @@ export default function CasesPage() {
 
                       {/* Description */}
                       {caseItem.description && (
-                        <p className="text-sm text-slate-600 line-clamp-2">
+                        <p className="text-[11px] text-slate-600 line-clamp-2 leading-tight">
                           {caseItem.description}
                         </p>
                       )}
 
                       {/* Metadata */}
-                      <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+                      <div className="flex flex-wrap gap-1">
                         <Badge
                           variant="outline"
-                          className={`${statusColors[caseItem.status] || 'bg-slate-100 text-slate-700'} border`}
+                          className={`${statusColors[caseItem.status] || 'bg-slate-100 text-slate-700'} border-0 font-medium px-2 py-0 rounded-full text-[10px]`}
                         >
                           {caseItem.status.replace('_', ' ')}
                         </Badge>
-                        <Badge variant="outline" className="capitalize">
+                        <Badge variant="outline" className="capitalize border-0 bg-indigo-100 text-indigo-700 font-medium px-2 py-0 rounded-full text-[10px]">
                           {caseItem.caseType.replace('_', ' ')}
                         </Badge>
                         {caseItem.priority && (
                           <Badge
                             variant="outline"
-                            className={`${priorityColors[caseItem.priority] || ''} border`}
+                            className={`${priorityColors[caseItem.priority] || ''} border-0 font-medium px-2 py-0 rounded-full text-[10px]`}
                           >
                             {caseItem.priority}
                           </Badge>
@@ -340,15 +381,16 @@ export default function CasesPage() {
 
                       {/* Date */}
                       {caseItem.filingDate && (
-                        <div className="flex items-center gap-2 text-xs text-slate-500">
-                          <Calendar className="h-3 w-3" />
-                          <span>Filed: {formatDate(caseItem.filingDate)}</span>
+                        <div className="flex items-center gap-1.5">
+                          <Calendar className="h-3 w-3 text-indigo-600" />
+                          <span className="text-[10px] text-slate-600">Filed: <span className="font-medium">{formatDate(caseItem.filingDate)}</span></span>
                         </div>
                       )}
                     </CardContent>
                   </Card>
                 </motion.div>
-              ))}
+              );
+            })}
           </motion.div>
         ) : (
           <Card className="border-0 shadow-lg">

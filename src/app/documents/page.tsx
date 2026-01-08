@@ -194,9 +194,10 @@ export default function DocumentsPage() {
               </p>
             </div>
             <Link href="/documents/generate">
-              <Button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg shadow-blue-500/30">
-                <Plus className="w-4 h-4 mr-2" />
-                Generate Document
+              <Button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg shadow-blue-500/30 h-8 px-2 text-xs sm:h-10 sm:px-4 sm:text-sm">
+                <Plus className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Generate Document</span>
+                <span className="sm:hidden">Generate</span>
               </Button>
             </Link>
           </div>

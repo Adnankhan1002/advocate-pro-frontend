@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion, Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -22,8 +22,12 @@ import {
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
+import { CaseStatusChart } from '@/components/charts/CaseStatusChart';
+import { MonthlyActivityChart } from '@/components/charts/MonthlyActivityChart';
+import { TaskProgressChart } from '@/components/charts/TaskProgressChart';
+import { CaseTypeChart } from '@/components/charts/CaseTypeChart';
 
-const containerVariants: Variants = {
+const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -34,12 +38,12 @@ const containerVariants: Variants = {
   },
 };
 
-const itemVariants: Variants = {
+const itemVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4 },
+    transition: { duration: 0.4, ease: 'easeOut' },
   },
 };
 
@@ -258,28 +262,43 @@ export default function DashboardPage() {
                   <CardTitle className="text-lg">Today's Summary</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-50">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-emerald-50 to-emerald-50/50 border border-emerald-100">
                     <div className="flex items-center gap-3">
-                      <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-                      <span className="text-sm font-medium text-slate-900">Tasks Done</span>
+                      <div className="w-10 h-10 rounded-lg bg-emerald-500 flex items-center justify-center">
+                        <CheckCircle2 className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium text-slate-900 block">Tasks Done</span>
+                        <span className="text-xs text-emerald-600">Great progress!</span>
+                      </div>
                     </div>
-                    <span className="text-lg font-bold text-emerald-600">8/12</span>
+                    <span className="text-xl font-bold text-emerald-600">8/12</span>
                   </div>
                   
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-blue-50">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-blue-50 to-blue-50/50 border border-blue-100">
                     <div className="flex items-center gap-3">
-                      <FileText className="h-5 w-5 text-blue-600" />
-                      <span className="text-sm font-medium text-slate-900">Drafts</span>
+                      <div className="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center">
+                        <FileText className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium text-slate-900 block">Drafts</span>
+                        <span className="text-xs text-blue-600">In progress</span>
+                      </div>
                     </div>
-                    <span className="text-lg font-bold text-blue-600">4</span>
+                    <span className="text-xl font-bold text-blue-600">4</span>
                   </div>
                   
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-amber-50">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-amber-50 to-amber-50/50 border border-amber-100">
                     <div className="flex items-center gap-3">
-                      <AlertCircle className="h-5 w-5 text-amber-600" />
-                      <span className="text-sm font-medium text-slate-900">Alerts</span>
+                      <div className="w-10 h-10 rounded-lg bg-amber-500 flex items-center justify-center">
+                        <AlertCircle className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium text-slate-900 block">Alerts</span>
+                        <span className="text-xs text-amber-600">Need attention</span>
+                      </div>
                     </div>
-                    <span className="text-lg font-bold text-amber-600">2</span>
+                    <span className="text-xl font-bold text-amber-600">2</span>
                   </div>
                 </CardContent>
               </Card>
@@ -321,6 +340,40 @@ export default function DashboardPage() {
             </motion.div>
           </div>
         </div>
+
+        {/* Analytics Charts Section */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-6"
+        >
+          <h2 className="text-2xl font-bold text-slate-900">Analytics</h2>
+          
+          {/* Charts Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <motion.div variants={itemVariants}>
+              <MonthlyActivityChart />
+            </motion.div>
+            
+            <motion.div variants={itemVariants}>
+              <CaseStatusChart data={caseStats?.byStatus || {}} />
+            </motion.div>
+            
+            <motion.div variants={itemVariants}>
+              <TaskProgressChart 
+                tasksDone={8}
+                tasksTotal={12}
+                drafts={4}
+                alerts={2}
+              />
+            </motion.div>
+            
+            <motion.div variants={itemVariants}>
+              <CaseTypeChart />
+            </motion.div>
+          </div>
+        </motion.div>
       </div>
     </div>
   );
