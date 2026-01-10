@@ -134,17 +134,15 @@ export default function Home() {
               variants={itemVariants}
               className="mt-16 flex justify-center"
             >
-              <div className="relative">
-                <Image 
-                  src="/images/clients-office.jpg" 
-                  alt="Legal Practice Management" 
-                  width={600} 
-                  height={450}
-                  className="object-cover rounded-3xl shadow-2xl"
-                  priority
-                />
-                <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-slate-900/20 to-transparent" />
-              </div>
+              <Image 
+                src="/images/justice-adv.png" 
+                alt="Legal Professional with Lady Justice" 
+                width={400} 
+                height={350}
+                className="object-contain mix-blend-multiply"
+                priority
+                style={{ backgroundColor: 'transparent' }}
+              />
             </motion.div>
           </motion.div>
         </div>
@@ -172,13 +170,43 @@ export default function Home() {
               {features.map((feature, index) => {
                 const Icon = feature.icon;
                 return (
-                  <motion.div key={index} variants={itemVariants}>
+                  <motion.div 
+                    key={index} 
+                    variants={itemVariants}
+                    whileHover={{ 
+                      scale: 1.05,
+                      transition: { duration: 0.3 }
+                    }}
+                    animate={{
+                      x: [0, 30, 30, 0, 0],
+                      y: [0, 0, 30, 30, 0],
+                      transition: {
+                        duration: 6,
+                        repeat: Infinity,
+                        delay: index * 0.6,
+                        ease: "easeInOut",
+                        times: [0, 0.25, 0.5, 0.75, 1]
+                      }
+                    }}
+                  >
                     <Link href={feature.href}>
-                      <Card className="group h-full transition-all hover:shadow-lg hover:border-slate-400 dark:hover:border-slate-600 cursor-pointer">
-                        <CardHeader>
-                          <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 group-hover:bg-slate-900 dark:group-hover:bg-slate-700 transition-colors">
+                      <Card className="group h-full transition-all hover:shadow-lg hover:border-slate-400 dark:hover:border-slate-600 cursor-pointer overflow-hidden relative">
+                        <CardHeader className="relative z-10">
+                          <motion.div 
+                            className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 group-hover:bg-slate-900 dark:group-hover:bg-slate-700 transition-colors"
+                            animate={{
+                              scale: [1, 1.2, 1.2, 1, 1],
+                              rotate: [0, 0, 90, 180, 0],
+                            }}
+                            transition={{
+                              duration: 6,
+                              repeat: Infinity,
+                              delay: index * 0.6,
+                              ease: "easeInOut"
+                            }}
+                          >
                             <Icon className="h-6 w-6 text-slate-900 dark:text-slate-100 group-hover:text-white" />
-                          </div>
+                          </motion.div>
                           <CardTitle className="text-xl">{feature.title}</CardTitle>
                           <CardDescription className="text-base">
                             {feature.description}
