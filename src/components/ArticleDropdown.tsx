@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { getAllArticles, getArticleByNumber, searchArticles, ArticleListItem, Article } from '@/lib/articles';
+import { TextToSpeech } from '@/components/TextToSpeech';
+import { ArticleFlipCard } from '@/components/ArticleFlipCard';
 
 interface ArticleDropdownProps {
   onArticleSelect?: (article: Article) => void;
@@ -161,72 +163,13 @@ export const ArticleDropdown: React.FC<ArticleDropdownProps> = ({
 
       {/* Selected Article Details */}
       {showFullDetails && selectedArticle && (
-        <div className="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-          <div className="flex justify-between items-start mb-2">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Article {selectedArticle.article_number}
-            </h3>
-            <button
-              onClick={() => {
-                setSelectedArticle(null);
-                setSearchQuery('');
-              }}
-              className="text-gray-400 hover:text-gray-600"
-              aria-label="Clear selection"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          
-          <h4 className="text-md font-medium text-gray-800 mb-2">
-            {selectedArticle.title}
-          </h4>
-          
-          {selectedArticle.part && (
-            <div className="mb-3">
-              <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
-                {selectedArticle.part}
-              </span>
-            </div>
-          )}
-          
-          {selectedArticle.simplified_explanation && (
-            <div className="mb-3 p-3 bg-blue-50 rounded-lg">
-              <p className="text-sm font-medium text-blue-900 mb-1">Simplified Explanation:</p>
-              <p className="text-sm text-blue-800">
-                {selectedArticle.simplified_explanation}
-              </p>
-            </div>
-          )}
-          
-          {selectedArticle.purpose_and_intent && (
-            <div className="mb-3 p-3 bg-amber-50 rounded-lg">
-              <p className="text-sm font-medium text-amber-900 mb-1">Purpose & Intent:</p>
-              <p className="text-sm text-amber-800">
-                {selectedArticle.purpose_and_intent}
-              </p>
-            </div>
-          )}
-          
-          <div className="p-3 bg-white rounded-lg border border-gray-200">
-            <p className="text-sm font-medium text-gray-700 mb-2">Original Text:</p>
-            <div className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
-              {selectedArticle.original_text}
-            </div>
-          </div>
-          
-          {selectedArticle.keywords && selectedArticle.keywords.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {selectedArticle.keywords.map((keyword, index) => (
-                <span key={index} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
-                  {keyword}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
+        <ArticleFlipCard
+          article={selectedArticle}
+          onClose={() => {
+            setSelectedArticle(null);
+            setSearchQuery('');
+          }}
+        />
       )}
     </div>
   );
