@@ -38,14 +38,14 @@ export function Navbar() {
       animate={{ y: 0, opacity: 1 }}
       className="sticky top-0 z-30 border-b border-slate-200 bg-white/80 backdrop-blur-xl"
     >
-      <div className="flex h-16 items-center justify-between px-6">
+      <div className="flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4 md:px-6 gap-2">
         {/* Left: Menu + Search */}
-        <div className="flex items-center gap-4 flex-1">
+        <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
           <Button
             variant="ghost"
             size="icon"
             onClick={toggleSidebar}
-            className="lg:hidden"
+            className="lg:hidden flex-shrink-0"
           >
             <Menu className="h-5 w-5" />
           </Button>
@@ -64,19 +64,19 @@ export function Navbar() {
         </div>
 
         {/* Center: Logo (mobile only) */}
-        <div className="lg:hidden absolute left-1/2 -translate-x-1/2">
-          <h1 className="text-lg font-bold text-slate-900">Advocate Pro</h1>
+        <div className="lg:hidden flex-shrink-0">
+          <h1 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 whitespace-nowrap">Advocate Pro</h1>
         </div>
 
         {/* Right: Actions + User */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-shrink-0">
           {/* Search icon for mobile */}
-          <Button variant="ghost" size="icon" className="md:hidden">
+          <Button variant="ghost" size="icon" className="md:hidden flex-shrink-0">
             <Search className="h-5 w-5" />
           </Button>
 
           {/* Notifications */}
-          <Button variant="ghost" size="icon" className="relative">
+          <Button variant="ghost" size="icon" className="relative flex-shrink-0">
             <Bell className="h-5 w-5" />
             {notificationCount > 0 && (
               <motion.span
@@ -91,21 +91,21 @@ export function Navbar() {
 
           {/* User Menu */}
           {user && (
-            <div className="relative">
+            <div className="relative flex-shrink-0">
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-slate-100 transition-colors"
+                className="flex items-center gap-1.5 sm:gap-2 md:gap-3 px-1.5 sm:px-2 md:px-3 py-2 rounded-xl hover:bg-slate-100 transition-colors"
               >
-                <div className="hidden sm:block text-right">
-                  <p className="text-sm font-medium text-slate-900">
+                <div className="hidden sm:block text-right min-w-0">
+                  <p className="text-xs sm:text-sm font-medium text-slate-900 truncate">
                     {user.firstName} {user.lastName}
                   </p>
-                  <p className="text-xs text-slate-500">{user.role}</p>
+                  <p className="text-xs text-slate-500 truncate">{user.role}</p>
                 </div>
-                <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 flex items-center justify-center text-white font-semibold text-sm">
+                <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 flex items-center justify-center text-white font-semibold text-xs sm:text-sm flex-shrink-0">
                   {user.firstName.charAt(0)}{user.lastName.charAt(0)}
                 </div>
-                <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`hidden sm:block h-4 w-4 text-slate-400 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {/* Dropdown */}

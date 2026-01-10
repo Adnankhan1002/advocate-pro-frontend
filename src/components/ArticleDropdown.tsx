@@ -14,7 +14,7 @@ interface ArticleDropdownProps {
 
 export const ArticleDropdown: React.FC<ArticleDropdownProps> = ({
   onArticleSelect, 
-  
+
   placeholder = 'Search for a constitution article...',
   className = '',
   showFullDetails = true
@@ -106,25 +106,25 @@ export const ArticleDropdown: React.FC<ArticleDropdownProps> = ({
           }}
           onFocus={() => setIsOpen(true)}
           placeholder={placeholder}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+          className="w-full px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
           disabled={isLoading}
         />
         {isLoading && (
           <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <div className="animate-spin h-5 w-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+            <div className="animate-spin h-4 w-4 sm:h-5 sm:w-5 border-2 border-blue-500 border-t-transparent rounded-full"></div>
           </div>
         )}
       </div>
 
       {/* Dropdown List */}
       {isOpen && !isLoading && (
-        <div className="absolute z-50 w-full mt-2 bg-white border border-gray-300 rounded-lg shadow-lg max-h-80 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-2 bg-white border border-gray-300 rounded-lg shadow-lg max-h-[60vh] sm:max-h-80 overflow-y-auto">
           {error ? (
-            <div className="px-4 py-3 text-red-600 text-sm">
+            <div className="px-3 py-2 sm:px-4 sm:py-3 text-red-600 text-xs sm:text-sm">
               Error: {error}
             </div>
           ) : filteredArticles.length === 0 ? (
-            <div className="px-4 py-3 text-gray-500 text-sm">
+            <div className="px-3 py-2 sm:px-4 sm:py-3 text-gray-500 text-xs sm:text-sm">
               No articles found
             </div>
           ) : (
@@ -133,22 +133,22 @@ export const ArticleDropdown: React.FC<ArticleDropdownProps> = ({
                 <li
                   key={article._id}
                   onClick={() => handleArticleClick(article)}
-                  className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                  className="px-3 py-2 sm:px-4 sm:py-3 hover:bg-blue-50 active:bg-blue-100 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
                 >
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 w-20 font-semibold text-blue-600">
+                  <div className="flex items-start gap-2 sm:gap-3">
+                    <div className="flex-shrink-0 w-14 sm:w-20 font-semibold text-blue-600 text-xs sm:text-sm">
                       Art. {article.article_number}
                     </div>
-                    <div className="flex-1">
-                      <div className="font-medium text-gray-900">{article.title}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-gray-900 text-xs sm:text-sm leading-tight">{article.title}</div>
                       {article.simplified_explanation && (
-                        <div className="text-sm text-gray-600 mt-1 line-clamp-2">
+                        <div className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-2">
                           {article.simplified_explanation}
                         </div>
                       )}
                       {article.part && (
                         <div className="text-xs text-gray-500 mt-1">
-                          <span className="inline-block px-2 py-1 bg-gray-100 rounded">
+                          <span className="inline-block px-2 py-0.5 sm:py-1 bg-gray-100 rounded text-xs">
                             {article.part}
                           </span>
                         </div>
