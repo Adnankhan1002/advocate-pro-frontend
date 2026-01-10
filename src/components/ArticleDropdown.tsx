@@ -13,7 +13,8 @@ interface ArticleDropdownProps {
 }
 
 export const ArticleDropdown: React.FC<ArticleDropdownProps> = ({
-  onArticleSelect,
+  onArticleSelect, 
+  
   placeholder = 'Search for a constitution article...',
   className = '',
   showFullDetails = true
