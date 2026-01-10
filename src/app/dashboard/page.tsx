@@ -43,10 +43,6 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { 
-      duration: 0.5,
-      ease: [0.25, 0.46, 0.45, 0.94]
-    },
   },
 };
 
@@ -55,10 +51,6 @@ const cardHoverVariants = {
   hover: { 
     scale: 1.02, 
     y: -4,
-    transition: { 
-      duration: 0.3,
-      ease: [0.25, 0.46, 0.45, 0.94]
-    }
   },
 };
 
@@ -67,11 +59,6 @@ const slideInVariants = {
   visible: (i: number) => ({
     opacity: 1,
     x: 0,
-    transition: {
-      delay: i * 0.1,
-      duration: 0.5,
-      ease: [0.25, 0.46, 0.45, 0.94]
-    }
   })
 };
 
@@ -130,7 +117,7 @@ export default function DashboardPage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
           className="space-y-0.5 sm:space-y-1 md:space-y-2"
         >
           <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900">
@@ -200,7 +187,7 @@ export default function DashboardPage() {
                               transition={{ 
                                 delay: 0.2 + index * 0.1,
                                 duration: 0.5,
-                                ease: [0.25, 0.46, 0.45, 0.94]
+                                ease: "easeOut"
                               }}
                             >
                               {stat.value}
@@ -411,7 +398,6 @@ export default function DashboardPage() {
                       <motion.div 
                         className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-amber-500 flex items-center justify-center flex-shrink-0"
                         whileHover={{ rotate: [0, -10, 10, -10, 0] }}
-                        transition={{ duration: 0.5 }}
                         animate={{ 
                           scale: [1, 1.05, 1],
                         }}
