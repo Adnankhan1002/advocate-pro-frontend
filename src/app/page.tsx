@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
@@ -131,70 +131,147 @@ const features = [
 ];
 
 export default function Home() {
+  const [swapState, setSwapState] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSwapState((prev) => !prev);
+    }, 3000); // Swap every 3 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="flex min-h-screen flex-col">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
-        <div className="container mx-auto px-3 sm:px-4 md:px-6 py-12 sm:py-16 md:py-20 lg:py-28">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 md:py-12 lg:py-16">
           <motion.div
             initial="hidden"
             animate="visible"
             variants={containerVariants}
-            className="mx-auto max-w-4xl text-center"
+            className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-12 items-center max-w-7xl mx-auto"
           >
-            <motion.div variants={itemVariants} className="mb-4 sm:mb-6 inline-flex items-center gap-1.5 sm:gap-2">
-              <Scale className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10 text-slate-900 dark:text-slate-100" />
-              <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100">
-                Advocate Pro
-              </span>
-            </motion.div>
-            
-            <motion.h1 
-              variants={itemVariants}
-              className="mb-4 sm:mb-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-slate-900 dark:text-slate-100 leading-tight"
-            >
-              Complete Legal Practice Management
-            </motion.h1>
-            
-            <motion.p 
-              variants={itemVariants}
-              className="mb-6 sm:mb-8 md:mb-10 text-sm sm:text-base md:text-lg lg:text-xl text-slate-600 dark:text-slate-400 px-2 sm:px-0"
-            >
-              Streamline your legal practice with our comprehensive case management system.
-              Manage cases, clients, hearings, and documents all in one place.
-            </motion.p>
+            {/* Text Content - Left Side */}
+            <div className="text-left pr-2 sm:pr-4">
+              <motion.div variants={itemVariants} className="mb-2 sm:mb-4 flex items-center gap-1 sm:gap-1.5">
+                <Scale className="h-4 w-4 sm:h-7 sm:w-7 md:h-9 md:w-9 lg:h-10 lg:w-10 text-slate-900 dark:text-slate-100" />
+                <span className="text-sm sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-slate-100">
+                  Advocate Pro
+                </span>
+              </motion.div>
+              
+              <motion.h1 
+                variants={itemVariants}
+                className="mb-2 sm:mb-4 md:mb-6 text-base sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-slate-900 dark:text-slate-100 leading-tight"
+              >
+                Complete Legal Practice Management
+              </motion.h1>
+              
+              <motion.p 
+                variants={itemVariants}
+                className="mb-3 sm:mb-6 md:mb-8 lg:mb-10 text-xs sm:text-sm md:text-base lg:text-lg text-slate-600 dark:text-slate-400"
+              >
+                Streamline your legal practice with our comprehensive case management system.
+                Manage cases, clients, hearings, and documents all in one place.
+              </motion.p>
 
+              <motion.div 
+                variants={itemVariants}
+                className="flex flex-col gap-2 sm:gap-3"
+              >
+                <Button asChild size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm md:text-base w-full sm:w-full lg:size-lg">
+                  <Link href="/dashboard">
+                    Go to Dashboard
+                    <ArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4" />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm md:text-base w-full sm:w-full lg:size-lg">
+                  <Link href="/cases">
+                    View Cases
+                  </Link>
+                </Button>
+              </motion.div>
+            </div>
+
+            {/* Hero Image - Right Side */}
             <motion.div 
               variants={itemVariants}
-              className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:justify-center px-2 sm:px-0"
-            >
-              <Button asChild size="lg" className="gap-2 text-sm sm:text-base w-full sm:w-auto">
-                <Link href="/dashboard">
-                  Go to Dashboard
-                  <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="gap-2 text-sm sm:text-base w-full sm:w-auto">
-                <Link href="/cases">
-                  View Cases
-                </Link>
-              </Button>
-            </motion.div>
-
-            {/* Hero Image */}
-            <motion.div 
-              variants={itemVariants}
-              className="mt-8 sm:mt-12 md:mt-16 flex justify-center"
+              className="flex justify-end"
             >
               <Image 
                 src="/images/justice-adv.png" 
                 alt="Legal Professional with Lady Justice" 
-                width={400} 
-                height={350}
-                className="object-contain mix-blend-multiply w-[250px] h-auto sm:w-[300px] md:w-[350px] lg:w-[400px]"
+                width={500} 
+                height={450}
+                className="object-contain mix-blend-multiply w-[180px] h-auto sm:w-[280px] md:w-[380px] lg:w-[500px]"
                 priority
                 style={{ backgroundColor: 'transparent' }}
               />
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Video and Quote Section */}
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={containerVariants}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center max-w-7xl mx-auto"
+          >
+            {/* Quote Section */}
+            <motion.div variants={itemVariants} className="order-2 lg:order-1 text-center lg:text-left px-4 sm:px-6 lg:px-8">
+              <div className="mb-6">
+                <span className="text-amber-400 text-6xl sm:text-7xl md:text-8xl font-serif leading-none">"</span>
+              </div>
+              <blockquote className="space-y-4 sm:space-y-6">
+                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium text-white leading-relaxed">
+                  Drowning in case files, missed deadlines, and endless paperwork? 
+                  <span className="block mt-3 sm:mt-4 text-amber-400">
+                    Modern legal practice shouldn't feel this chaotic.
+                  </span>
+                </p>
+                <p className="text-base sm:text-lg text-slate-300">
+                  Every advocate today battles the same frustrations: scattered documents, forgotten hearings, 
+                  client management nightmares, and the constant pressure of staying organized while delivering justice.
+                </p>
+                <div className="pt-4 sm:pt-6 border-t border-slate-700">
+                  <p className="text-amber-400 font-semibold text-sm sm:text-base">
+                    It's time to break free from the stress.
+                  </p>
+                  <p className="text-slate-400 text-xs sm:text-sm mt-2">
+                    Let technology handle the chaos, so you can focus on what matters most — winning cases.
+                  </p>
+                </div>
+              </blockquote>
+            </motion.div>
+
+            {/* Video Section */}
+            <motion.div 
+              variants={itemVariants} 
+              className="order-1 lg:order-2 px-6 sm:px-0"
+            >
+              <div className="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border-2 sm:border-4 border-amber-400/20 hover:border-amber-400/40 transition-all duration-300 max-w-xs sm:max-w-none mx-auto">
+                <video
+                  className="w-full h-auto"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                >
+                  <source src="/videos/adv.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent pointer-events-none"></div>
+              </div>
+              <p className="text-center text-slate-400 text-xs sm:text-sm mt-3 sm:mt-4 italic">
+                See how Advocate Pro transforms legal practice management
+              </p>
             </motion.div>
           </motion.div>
         </div>
@@ -218,9 +295,22 @@ export default function Home() {
               </p>
             </motion.div>
 
-            <div className="grid gap-4 sm:gap-5 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-2 sm:gap-4 md:gap-5 lg:gap-6 grid-cols-3">
               {features.map((feature, index) => {
                 const Icon = feature.icon;
+                const isPaired = index % 2 === 0;
+                const pairIndex = Math.floor(index / 2);
+                
+                // Calculate swap animation based on pair
+                let xOffset = 0;
+                if (index % 2 === 0) {
+                  // Even index (left card in pair) - move right when swapped
+                  xOffset = swapState ? 100 : 0;
+                } else {
+                  // Odd index (right card in pair) - move left when swapped
+                  xOffset = swapState ? -100 : 0;
+                }
+                
                 return (
                   <motion.div 
                     key={index} 
@@ -230,37 +320,23 @@ export default function Home() {
                       transition: { duration: 0.3 }
                     }}
                     animate={{
-                      x: [0, 30, 30, 0, 0],
-                      y: [0, 0, 30, 30, 0],
-                      transition: {
-                        duration: 6,
-                        repeat: Infinity,
-                        delay: index * 0.6,
-                        ease: "easeInOut",
-                        times: [0, 0.25, 0.5, 0.75, 1]
-                      }
+                      x: xOffset,
+                    }}
+                    transition={{
+                      duration: 0.6,
+                      ease: [0.4, 0, 0.2, 1], // power2.inOut equivalent
                     }}
                   >
                     <Link href={feature.href}>
                       <Card className="group h-full transition-all hover:shadow-lg hover:border-slate-400 dark:hover:border-slate-600 cursor-pointer overflow-hidden relative">
-                        <CardHeader className="relative z-10">
-                          <motion.div 
-                            className="mb-3 sm:mb-4 inline-flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 group-hover:bg-slate-900 dark:group-hover:bg-slate-700 transition-colors"
-                            animate={{
-                              scale: [1, 1.2, 1.2, 1, 1],
-                              rotate: [0, 0, 90, 180, 0],
-                            }}
-                            transition={{
-                              duration: 6,
-                              repeat: Infinity,
-                              delay: index * 0.6,
-                              ease: "easeInOut"
-                            }}
+                        <CardHeader className="relative z-10 p-3 sm:p-4 md:p-6">
+                          <div 
+                            className="mb-2 sm:mb-3 inline-flex h-6 w-6 sm:h-10 sm:w-10 md:h-12 md:w-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 group-hover:bg-slate-900 dark:group-hover:bg-slate-700 transition-colors"
                           >
-                            <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-slate-900 dark:text-slate-100 group-hover:text-white" />
-                          </motion.div>
-                          <CardTitle className="text-lg sm:text-xl">{feature.title}</CardTitle>
-                          <CardDescription className="text-sm sm:text-base">
+                            <Icon className="h-3 w-3 sm:h-5 sm:w-5 md:h-6 md:w-6 text-slate-900 dark:text-slate-100 group-hover:text-white" />
+                          </div>
+                          <CardTitle className="text-xs sm:text-lg md:text-xl mb-1 sm:mb-2">{feature.title}</CardTitle>
+                          <CardDescription className="text-[10px] sm:text-sm md:text-base leading-tight">
                             {feature.description}
                           </CardDescription>
                         </CardHeader>
@@ -270,56 +346,6 @@ export default function Home() {
                 );
               })}
             </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-white via-slate-50 to-violet-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950">
-        <div className="container mx-auto px-3 sm:px-4 md:px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={containerVariants}
-          >
-            <motion.div variants={itemVariants} className="mb-8 sm:mb-12 md:mb-16 text-center">
-              <h2 className="mb-3 sm:mb-4 text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100">
-                Simple, Transparent Pricing
-              </h2>
-              <p className="mx-auto max-w-2xl text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-400 px-2 sm:px-0">
-                Choose the perfect plan for your law practice. All plans include a 14-day free trial.
-              </p>
-            </motion.div>
-
-            <motion.div
-              variants={itemVariants}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto"
-            >
-              {pricingPlans.map((plan) => (
-                <PricingCard
-                  key={plan.name}
-                  name={plan.name}
-                  price={plan.price}
-                  period={plan.period}
-                  description={plan.description}
-                  features={plan.features}
-                  highlighted={plan.highlighted}
-                  onSubscribe={() => console.log(`Subscribing to ${plan.name}`)}
-                />
-              ))}
-            </motion.div>
-
-            <motion.div variants={itemVariants} className="mt-12 text-center">
-              <p className="text-slate-600 dark:text-slate-400 mb-4">
-                Need a custom plan for your firm?
-              </p>
-              <Button asChild variant="outline" size="lg">
-                <Link href="/pricing">
-                  View All Plans & FAQ
-                </Link>
-              </Button>
-            </motion.div>
           </motion.div>
         </div>
       </section>
