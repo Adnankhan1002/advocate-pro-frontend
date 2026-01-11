@@ -204,8 +204,9 @@ export default function Home() {
                 alt="Legal Professional with Lady Justice" 
                 width={500} 
                 height={450}
-                className="object-contain w-[180px] h-auto sm:w-[280px] md:w-[380px] lg:w-[500px]"
+                className="object-contain mix-blend-multiply w-[180px] h-auto sm:w-[280px] md:w-[380px] lg:w-[500px]"
                 priority
+                style={{ backgroundColor: 'transparent' }}
               />
             </motion.div>
           </motion.div>
