@@ -27,6 +27,7 @@ const menuItems = [
   { label: 'Documents', href: '/documents', icon: FileText },
   { label: 'Diaries', href: '/diaries', icon: Book },
   { label: 'Constitution Articles', href: '/articles', icon: BookOpen },
+  { label: 'Subscription', href: '/subscription', icon: CreditCard },
 ];
 
 export function Sidebar() {

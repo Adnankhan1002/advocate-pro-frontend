@@ -16,8 +16,10 @@ import {
   ArrowRight,
   Shield,
   Bell,
-  Folder
+  Folder,
+  Check
 } from 'lucide-react';
+import { PricingCard } from '@/components/PricingCard';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -37,6 +39,57 @@ const itemVariants = {
     y: 0,
   },
 };
+
+const pricingPlans = [
+  {
+    name: 'Basic',
+    price: 29,
+    period: 'month',
+    description: 'Perfect for solo practitioners',
+    features: [
+      'Up to 50 cases',
+      'Basic case management',
+      'Client database',
+      '5GB document storage',
+      'Email support',
+      'Mobile app access',
+    ],
+  },
+  {
+    name: 'Professional',
+    price: 79,
+    period: 'month',
+    description: 'Ideal for growing law firms',
+    features: [
+      'Unlimited cases',
+      'Advanced case management',
+      'Unlimited clients',
+      '50GB document storage',
+      'Priority support',
+      'Multiple diary types',
+      'Court hearing tracker',
+      'Document templates',
+      'Team collaboration (5 users)',
+    ],
+    highlighted: true,
+  },
+  {
+    name: 'Enterprise',
+    price: 199,
+    period: 'month',
+    description: 'For large law firms',
+    features: [
+      'Everything in Professional',
+      'Unlimited team members',
+      '500GB document storage',
+      '24/7 premium support',
+      'Custom integrations',
+      'Advanced analytics',
+      'API access',
+      'Dedicated account manager',
+    ],
+  },
+];
 
 const features = [
   {
@@ -82,30 +135,30 @@ export default function Home() {
     <div className="flex min-h-screen flex-col">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
-        <div className="container mx-auto px-4 py-20 sm:py-28">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 py-12 sm:py-16 md:py-20 lg:py-28">
           <motion.div
             initial="hidden"
             animate="visible"
             variants={containerVariants}
             className="mx-auto max-w-4xl text-center"
           >
-            <motion.div variants={itemVariants} className="mb-6 inline-flex items-center gap-2">
-              <Scale className="h-10 w-10 text-slate-900 dark:text-slate-100" />
-              <span className="text-4xl font-bold text-slate-900 dark:text-slate-100">
+            <motion.div variants={itemVariants} className="mb-4 sm:mb-6 inline-flex items-center gap-1.5 sm:gap-2">
+              <Scale className="h-7 w-7 sm:h-9 sm:w-9 md:h-10 md:w-10 text-slate-900 dark:text-slate-100" />
+              <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100">
                 Advocate Pro
               </span>
             </motion.div>
             
             <motion.h1 
               variants={itemVariants}
-              className="mb-6 text-5xl font-bold tracking-tight text-slate-900 dark:text-slate-100 sm:text-6xl"
+              className="mb-4 sm:mb-6 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-slate-900 dark:text-slate-100 leading-tight"
             >
               Complete Legal Practice Management
             </motion.h1>
             
             <motion.p 
               variants={itemVariants}
-              className="mb-10 text-xl text-slate-600 dark:text-slate-400"
+              className="mb-6 sm:mb-8 md:mb-10 text-sm sm:text-base md:text-lg lg:text-xl text-slate-600 dark:text-slate-400 px-2 sm:px-0"
             >
               Streamline your legal practice with our comprehensive case management system.
               Manage cases, clients, hearings, and documents all in one place.
@@ -113,15 +166,15 @@ export default function Home() {
 
             <motion.div 
               variants={itemVariants}
-              className="flex flex-col gap-4 sm:flex-row sm:justify-center"
+              className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:justify-center px-2 sm:px-0"
             >
-              <Button asChild size="lg" className="gap-2 text-base">
+              <Button asChild size="lg" className="gap-2 text-sm sm:text-base w-full sm:w-auto">
                 <Link href="/dashboard">
                   Go to Dashboard
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="gap-2 text-base">
+              <Button asChild variant="outline" size="lg" className="gap-2 text-sm sm:text-base w-full sm:w-auto">
                 <Link href="/cases">
                   View Cases
                 </Link>
@@ -131,14 +184,14 @@ export default function Home() {
             {/* Hero Image */}
             <motion.div 
               variants={itemVariants}
-              className="mt-16 flex justify-center"
+              className="mt-8 sm:mt-12 md:mt-16 flex justify-center"
             >
               <Image 
                 src="/images/justice-adv.png" 
                 alt="Legal Professional with Lady Justice" 
                 width={400} 
                 height={350}
-                className="object-contain mix-blend-multiply"
+                className="object-contain mix-blend-multiply w-[250px] h-auto sm:w-[300px] md:w-[350px] lg:w-[400px]"
                 priority
                 style={{ backgroundColor: 'transparent' }}
               />
@@ -148,24 +201,24 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-white dark:bg-slate-900">
-        <div className="container mx-auto px-4">
+      <section className="py-12 sm:py-16 md:py-20 bg-white dark:bg-slate-900">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={containerVariants}
           >
-            <motion.div variants={itemVariants} className="mb-16 text-center">
-              <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-slate-100 sm:text-4xl">
+            <motion.div variants={itemVariants} className="mb-8 sm:mb-12 md:mb-16 text-center">
+              <h2 className="mb-3 sm:mb-4 text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100">
                 Everything You Need
               </h2>
-              <p className="mx-auto max-w-2xl text-lg text-slate-600 dark:text-slate-400">
+              <p className="mx-auto max-w-2xl text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-400 px-2 sm:px-0">
                 Powerful features designed specifically for legal professionals
               </p>
             </motion.div>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:gap-5 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               {features.map((feature, index) => {
                 const Icon = feature.icon;
                 return (
@@ -192,7 +245,7 @@ export default function Home() {
                       <Card className="group h-full transition-all hover:shadow-lg hover:border-slate-400 dark:hover:border-slate-600 cursor-pointer overflow-hidden relative">
                         <CardHeader className="relative z-10">
                           <motion.div 
-                            className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 group-hover:bg-slate-900 dark:group-hover:bg-slate-700 transition-colors"
+                            className="mb-3 sm:mb-4 inline-flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 group-hover:bg-slate-900 dark:group-hover:bg-slate-700 transition-colors"
                             animate={{
                               scale: [1, 1.2, 1.2, 1, 1],
                               rotate: [0, 0, 90, 180, 0],
@@ -204,10 +257,10 @@ export default function Home() {
                               ease: "easeInOut"
                             }}
                           >
-                            <Icon className="h-6 w-6 text-slate-900 dark:text-slate-100 group-hover:text-white" />
+                            <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-slate-900 dark:text-slate-100 group-hover:text-white" />
                           </motion.div>
-                          <CardTitle className="text-xl">{feature.title}</CardTitle>
-                          <CardDescription className="text-base">
+                          <CardTitle className="text-lg sm:text-xl">{feature.title}</CardTitle>
+                          <CardDescription className="text-sm sm:text-base">
                             {feature.description}
                           </CardDescription>
                         </CardHeader>
@@ -221,9 +274,59 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Pricing Section */}
+      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-white via-slate-50 to-violet-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={containerVariants}
+          >
+            <motion.div variants={itemVariants} className="mb-8 sm:mb-12 md:mb-16 text-center">
+              <h2 className="mb-3 sm:mb-4 text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100">
+                Simple, Transparent Pricing
+              </h2>
+              <p className="mx-auto max-w-2xl text-sm sm:text-base md:text-lg text-slate-600 dark:text-slate-400 px-2 sm:px-0">
+                Choose the perfect plan for your law practice. All plans include a 14-day free trial.
+              </p>
+            </motion.div>
+
+            <motion.div
+              variants={itemVariants}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto"
+            >
+              {pricingPlans.map((plan) => (
+                <PricingCard
+                  key={plan.name}
+                  name={plan.name}
+                  price={plan.price}
+                  period={plan.period}
+                  description={plan.description}
+                  features={plan.features}
+                  highlighted={plan.highlighted}
+                  onSubscribe={() => console.log(`Subscribing to ${plan.name}`)}
+                />
+              ))}
+            </motion.div>
+
+            <motion.div variants={itemVariants} className="mt-12 text-center">
+              <p className="text-slate-600 dark:text-slate-400 mb-4">
+                Need a custom plan for your firm?
+              </p>
+              <Button asChild variant="outline" size="lg">
+                <Link href="/pricing">
+                  View All Plans & FAQ
+                </Link>
+              </Button>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* CTA Section */}
-      <section className="py-20 bg-slate-900 dark:bg-slate-950">
-        <div className="container mx-auto px-4">
+      <section className="py-12 sm:py-16 md:py-20 bg-slate-900 dark:bg-slate-950">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -233,20 +336,20 @@ export default function Home() {
           >
             <motion.h2 
               variants={itemVariants}
-              className="mb-6 text-3xl font-bold text-white sm:text-4xl"
+              className="mb-4 sm:mb-6 text-2xl sm:text-3xl md:text-4xl font-bold text-white"
             >
               Ready to get started?
             </motion.h2>
             <motion.p 
               variants={itemVariants}
-              className="mb-10 text-lg text-slate-300"
+              className="mb-6 sm:mb-8 md:mb-10 text-sm sm:text-base md:text-lg text-slate-300 px-2 sm:px-0"
             >
               Access your dashboard and start managing your legal practice more efficiently today.
             </motion.p>
             <motion.div variants={itemVariants}>
-              <Button asChild size="lg" variant="secondary" className="gap-2 text-base">
+              <Button asChild size="lg" variant="secondary" className="gap-2 text-sm sm:text-base w-full sm:w-auto">
                 <Link href="/dashboard">
-                  <Folder className="h-4 w-4" />
+                  <Folder className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   Open Dashboard
                 </Link>
               </Button>

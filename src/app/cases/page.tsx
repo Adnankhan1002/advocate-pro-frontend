@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { useCases, useCaseById, useDeleteCase } from '@/hooks/useCases';
 import { useAuthStore } from '@/store/auth';
+import gsap from 'gsap';
+import { TextPlugin } from 'gsap/TextPlugin';
 import { 
   Plus, 
   Search, 
@@ -83,6 +85,10 @@ const cardColors = [
   { bar: 'bg-violet-500', bg: 'from-violet-50/50 to-violet-100/30', border: 'border-violet-200/40' },
 ];
 
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(TextPlugin);
+}
+
 export default function CasesPage() {
   const router = useRouter();
   const { user } = useAuthStore();
@@ -93,6 +99,7 @@ export default function CasesPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const quoteTextRef = useRef<HTMLParagraphElement>(null);
 
   const { data: casesData } = useCases(page, 12, statusFilter, typeFilter, search);
   const { data: selectedCase, isLoading: isCaseLoading } = useCaseById(selectedCaseId || '');
@@ -100,6 +107,37 @@ export default function CasesPage() {
 
   const canEdit = user?.role === 'OWNER' || user?.role === 'ADMIN' || user?.role === 'ADVOCATE';
   const canDelete = user?.role === 'OWNER' || user?.role === 'ADMIN';
+
+  // GSAP Typewriter + Running Text Animation
+  useEffect(() => {
+    if (!quoteTextRef.current) return;
+
+    const message = '"When case management becomes effortless, advocacy evolves—and the future changes forever."';
+    const textEl = quoteTextRef.current;
+
+    // Clear initial text
+    textEl.textContent = '';
+
+    // Typewriter Effect
+    gsap.to(textEl, {
+      duration: message.length * 0.05,
+      text: message,
+      ease: 'none',
+      onComplete: () => {
+        // After typing, start running text animation
+        gsap.to(textEl, {
+          x: '-120%',
+          duration: 15,
+          ease: 'linear',
+          repeat: -1,
+        });
+      },
+    });
+
+    return () => {
+      gsap.killTweensOf(textEl);
+    };
+  }, []);
 
   const handleViewCase = (caseId: string) => {
     setSelectedCaseId(caseId);
@@ -143,10 +181,22 @@ export default function CasesPage() {
         >
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-4xl lg:text-5xl font-bold text-slate-900">Cases</h1>
-              <p className="text-lg text-slate-600 mt-1">
+              <motion.h1 
+                className="text-4xl lg:text-5xl font-bold text-slate-900"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+              >
+                Cases
+              </motion.h1>
+              <motion.p 
+                className="text-lg text-slate-600 mt-1"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+              >
                 {casesData?.pagination?.total || 0} total cases
-              </p>
+              </motion.p>
             </div>
             <Link href="/cases/new">
               <Button className="gap-2 bg-slate-900 hover:bg-slate-800 text-white h-11 px-6">
@@ -155,9 +205,11 @@ export default function CasesPage() {
             </Link>
           </div>
           <div className="flex justify-center">
-            <div className="bg-gradient-to-r from-slate-500 via-blue-900 to-violet-200 px-1 py-6 rounded-2xl shadow-lg">
-              <p className="text-xl lg:text-2xl font-serif italic text-white text-center max-w-3xl leading-relaxed">
-                "When case management becomes effortless, advocacy evolves—and the future changes forever."
+            <div className="bg-gradient-to-r from-slate-500 via-blue-900 to-violet-200 px-1 py-6 rounded-2xl shadow-lg overflow-hidden">
+              <p 
+                ref={quoteTextRef}
+                className="text-xl lg:text-2xl font-serif italic text-white text-center max-w-3xl leading-relaxed inline-block whitespace-nowrap"
+              >
               </p>
             </div>
           </div>

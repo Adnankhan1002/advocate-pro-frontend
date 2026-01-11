@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import gsap from 'gsap';
+import { TextPlugin } from 'gsap/TextPlugin';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -51,6 +53,10 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
 };
 
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(TextPlugin);
+}
+
 export default function ClientsPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
@@ -60,9 +66,41 @@ export default function ClientsPage() {
   const { data: clientsData } = useClients(page, 12, status, search);
   const deleteClientMutation = useDeleteClient();
   const { user } = useAuthStore();
+  const quoteTextRef = useRef<HTMLParagraphElement>(null);
 
   // Check if user can delete clients (OWNER or ADMIN)
   const canDelete = user?.role === 'OWNER' || user?.role === 'ADMIN';
+  
+  // GSAP Typewriter + Running Text Animation
+  useEffect(() => {
+    if (!quoteTextRef.current) return;
+
+    const message = '"Client handling, once a challenge for advocates, is now seamless—transforming how legal practice works."';
+    const textEl = quoteTextRef.current;
+
+    // Clear initial text
+    textEl.textContent = '';
+
+    // Typewriter Effect
+    gsap.to(textEl, {
+      duration: message.length * 0.05,
+      text: message,
+      ease: 'none',
+      onComplete: () => {
+        // After typing, start running text animation
+        gsap.to(textEl, {
+          x: '-120%',
+          duration: 15,
+          ease: 'linear',
+          repeat: -1,
+        });
+      },
+    });
+
+    return () => {
+      gsap.killTweensOf(textEl);
+    };
+  }, []);
   
   // Debug logging
   React.useEffect(() => {
@@ -78,7 +116,7 @@ export default function ClientsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
-      <div className="max-w-[1600px] mx-auto p-6 lg:p-8 space-y-6">
+      <div className="max-w-[1600px] mx-auto p-3 sm:p-4 md:p-6 lg:p-8 space-y-4 sm:space-y-5 md:space-y-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -86,14 +124,26 @@ export default function ClientsPage() {
           className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
         >
           <div>
-            <h1 className="text-4xl lg:text-5xl font-bold text-slate-900">Clients</h1>
-            <p className="text-lg text-slate-600 mt-1">
+            <motion.h1 
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+              Clients
+            </motion.h1>
+            <motion.p 
+              className="text-sm sm:text-base md:text-lg text-slate-600 mt-0.5 sm:mt-1"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+            >
               {clientsData?.pagination?.total || 0} total clients
-            </p>
+            </motion.p>
           </div>
           <Link href="/clients/new">
-            <Button className="gap-2 bg-slate-900 hover:bg-slate-800 text-white h-11 px-6">
-              <Plus className="h-5 w-5" /> Add Client
+            <Button className="gap-2 bg-slate-900 hover:bg-slate-800 text-white h-9 sm:h-10 md:h-11 px-4 sm:px-5 md:px-6 text-sm sm:text-base w-full sm:w-auto">
+              <Plus className="h-4 w-4 sm:h-5 sm:w-5" /> Add Client
             </Button>
           </Link>
         </motion.div>
@@ -105,9 +155,11 @@ export default function ClientsPage() {
           transition={{ delay: 0.1 }}
           className="flex justify-center"
         >
-          <div className="bg-gradient-to-r from-slate-600 via-blue-900 to-violet-400 px-8 py-8 rounded-3xl shadow-2xl shadow-purple-500/20">
-            <p className="text-xl lg:text-2xl font-serif italic text-white text-center max-w-3xl leading-relaxed">
-              "Client handling, once a challenge for advocates, is now seamless—transforming how legal practice works."
+          <div className="bg-gradient-to-r from-slate-600 via-blue-900 to-violet-400 px-4 sm:px-6 md:px-8 py-4 sm:py-6 md:py-8 rounded-2xl sm:rounded-3xl shadow-2xl shadow-purple-500/20 overflow-hidden">
+            <p 
+              ref={quoteTextRef}
+              className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-serif italic text-white text-center max-w-3xl leading-relaxed inline-block whitespace-nowrap"
+            >
             </p>
           </div>
         </motion.div>
@@ -124,10 +176,10 @@ export default function ClientsPage() {
         >
           {/* Filter Box */}
           <Card className="border-0 shadow-sm">
-            <CardContent className="p-6 space-y-4">
+            <CardContent className="p-3 sm:p-4 md:p-6 space-y-3 sm:space-y-4">
               {/* Search Bar */}
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+                <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-slate-400" />
                 <Input
                   placeholder="Search clients by name, email, or phone..."
                   value={search}
@@ -135,12 +187,12 @@ export default function ClientsPage() {
                     setSearch(e.target.value);
                     setPage(1);
                   }}
-                  className="pl-12 h-12 bg-white border-slate-200 shadow-sm"
+                  className="pl-9 sm:pl-12 h-10 sm:h-12 bg-white border-slate-200 shadow-sm text-sm sm:text-base"
                 />
               </div>
 
               {/* Status Filters */}
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 {['active', 'inactive', 'archived'].map((s) => (
                   <Button
                     key={s}
@@ -150,7 +202,7 @@ export default function ClientsPage() {
                       setStatus(s);
                       setPage(1);
                     }}
-                    className="capitalize rounded-full"
+                    className="capitalize rounded-full text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4"
                   >
                     {s}
                   </Button>
@@ -164,15 +216,15 @@ export default function ClientsPage() {
         {clientsData?.data && clientsData.data.length > 0 ? (
           <Card className="border-0 shadow-lg overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[800px]">
                 <thead className="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Client</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Contact</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Address</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">Financial</th>
-                    <th className="px-6 py-4 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">Actions</th>
+                    <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-slate-700 uppercase tracking-wider">Client</th>
+                    <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-slate-700 uppercase tracking-wider">Contact</th>
+                    <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-slate-700 uppercase tracking-wider">Address</th>
+                    <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-slate-700 uppercase tracking-wider">Status</th>
+                    <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-left text-[10px] sm:text-xs font-semibold text-slate-700 uppercase tracking-wider">Financial</th>
+                    <th className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 text-center text-[10px] sm:text-xs font-semibold text-slate-700 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-slate-100">
@@ -185,20 +237,20 @@ export default function ClientsPage() {
                       className="hover:bg-slate-50 transition-colors"
                     >
                       {/* Client Name & Avatar */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs sm:text-sm shrink-0">
                             {client.firstName?.charAt(0)}{client.lastName?.charAt(0)}
                           </div>
                           <div>
-                            <div className="font-semibold text-slate-900">
+                            <div className="font-semibold text-slate-900 text-xs sm:text-sm">
                               {client.firstName} {client.lastName}
                             </div>
-                            <div className="flex items-center gap-1 text-xs text-slate-500">
+                            <div className="flex items-center gap-1 text-[10px] sm:text-xs text-slate-500">
                               {client.category === 'individual' ? (
-                                <><User className="h-3 w-3" /> Individual</>
+                                <><User className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> Individual</>
                               ) : (
-                                <><Building2 className="h-3 w-3" /> {client.category}</>
+                                <><Building2 className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> {client.category}</>
                               )}
                             </div>
                           </div>
@@ -206,17 +258,17 @@ export default function ClientsPage() {
                       </td>
 
                       {/* Contact */}
-                      <td className="px-6 py-4">
+                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4">
                         <div className="space-y-1">
                           {client.phone && (
-                            <div className="flex items-center gap-2 text-sm text-slate-600">
-                              <Phone className="h-3.5 w-3.5 text-slate-400" />
+                            <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-600">
+                              <Phone className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-400" />
                               {client.phone}
                             </div>
                           )}
                           {client.email && (
-                            <div className="flex items-center gap-2 text-sm text-slate-600 truncate max-w-xs">
-                              <Mail className="h-3.5 w-3.5 text-slate-400" />
+                            <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-600 truncate max-w-[150px] sm:max-w-xs">
+                              <Mail className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-400" />
                               <span className="truncate">{client.email}</span>
                             </div>
                           )}
@@ -224,20 +276,20 @@ export default function ClientsPage() {
                       </td>
 
                       {/* Address */}
-                      <td className="px-6 py-4">
+                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4">
                         {client.address?.city && (
-                          <div className="flex items-center gap-2 text-sm text-slate-600">
-                            <MapPin className="h-3.5 w-3.5 text-slate-400" />
+                          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-600">
+                            <MapPin className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-400" />
                             <span>{client.address.city}, {client.address.state}</span>
                           </div>
                         )}
                       </td>
 
                       {/* Status */}
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 whitespace-nowrap">
                         <Badge 
                           variant="outline" 
-                          className={`text-xs px-3 py-1 rounded-full ${
+                          className={`text-[10px] sm:text-xs px-2 sm:px-3 py-0.5 sm:py-1 rounded-full ${
                             client.status === 'active'
                               ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                               : client.status === 'inactive'
@@ -250,9 +302,9 @@ export default function ClientsPage() {
                       </td>
 
                       {/* Financial */}
-                      <td className="px-6 py-4">
+                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4">
                         {(client.totalAmount > 0 || client.amountPaid > 0) ? (
-                          <div className="space-y-1 text-xs">
+                          <div className="space-y-0.5 sm:space-y-1 text-[10px] sm:text-xs">
                             <div className="text-slate-600">
                               Total: <span className="font-semibold text-slate-900">₹{client.totalAmount?.toLocaleString() || 0}</span>
                             </div>
@@ -263,13 +315,13 @@ export default function ClientsPage() {
                             </div>
                           </div>
                         ) : (
-                          <span className="text-slate-400 text-xs">N/A</span>
+                          <span className="text-slate-400 text-[10px] sm:text-xs">N/A</span>
                         )}
                       </td>
 
                       {/* Actions */}
-                      <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <div className="flex items-center justify-center gap-2">
+                      <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 whitespace-nowrap text-center">
+                        <div className="flex items-center justify-center gap-1 sm:gap-2">
                           <Button
                             variant="ghost"
                             size="sm"
@@ -277,9 +329,9 @@ export default function ClientsPage() {
                               setSelectedClient(client);
                               setIsDialogOpen(true);
                             }}
-                            className="h-8 w-8 p-0 hover:bg-indigo-50 hover:text-indigo-600"
+                            className="h-7 w-7 sm:h-8 sm:w-8 p-0 hover:bg-indigo-50 hover:text-indigo-600"
                           >
-                            <Eye className="h-4 w-4" />
+                            <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                           </Button>
                           {canDelete && (
                             <AlertDialog>
@@ -287,9 +339,9 @@ export default function ClientsPage() {
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600"
+                                  className="h-7 w-7 sm:h-8 sm:w-8 p-0 hover:bg-red-50 hover:text-red-600"
                                 >
-                                  <Trash2 className="h-4 w-4" />
+                                  <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                 </Button>
                               </AlertDialogTrigger>
                               <AlertDialogContent className="bg-white border-slate-200">
@@ -325,19 +377,19 @@ export default function ClientsPage() {
           </Card>
         ) : (
           <Card className="border-0 shadow-lg">
-            <CardContent className="text-center py-16">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
-                <User className="h-8 w-8 text-slate-400" />
+            <CardContent className="text-center py-12 sm:py-16 px-4">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mx-auto mb-3 sm:mb-4 rounded-full bg-slate-100 flex items-center justify-center">
+                <User className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-slate-400" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">No clients found</h3>
-              <p className="text-slate-600 mb-6">
+              <h3 className="text-lg sm:text-xl font-semibold text-slate-900 mb-2">No clients found</h3>
+              <p className="text-sm sm:text-base text-slate-600 mb-4 sm:mb-6">
                 {search || status !== 'active'
                   ? 'Try adjusting your filters'
                   : 'Get started by adding your first client'}
               </p>
               <Link href="/clients/new">
-                <Button className="gap-2 bg-slate-900 hover:bg-slate-800">
-                  <Plus className="h-5 w-5" /> Add First Client
+                <Button className="gap-2 bg-slate-900 hover:bg-slate-800 text-sm sm:text-base">
+                  <Plus className="h-4 w-4 sm:h-5 sm:w-5" /> Add First Client
                 </Button>
               </Link>
             </CardContent>
@@ -349,17 +401,17 @@ export default function ClientsPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex items-center justify-center gap-3"
+            className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap px-2"
           >
             <Button
               variant="outline"
               disabled={page === 1}
               onClick={() => setPage(page - 1)}
-              className="h-10"
+              className="h-8 sm:h-9 md:h-10 text-xs sm:text-sm px-3 sm:px-4"
             >
               Previous
             </Button>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               {Array.from({ length: Math.min(clientsData.pagination.pages, 5) }, (_, i) => {
                 const pageNum = i + 1;
                 return (
@@ -367,7 +419,7 @@ export default function ClientsPage() {
                     key={pageNum}
                     variant={page === pageNum ? 'default' : 'outline'}
                     onClick={() => setPage(pageNum)}
-                    className="h-10 w-10 p-0"
+                    className="h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 p-0 text-xs sm:text-sm"
                   >
                     {pageNum}
                   </Button>
@@ -378,7 +430,7 @@ export default function ClientsPage() {
               variant="outline"
               disabled={page === clientsData.pagination.pages}
               onClick={() => setPage(page + 1)}
-              className="h-10"
+              className="h-8 sm:h-9 md:h-10 text-xs sm:text-sm px-3 sm:px-4"
             >
               Next
             </Button>
@@ -387,16 +439,16 @@ export default function ClientsPage() {
 
         {/* Client Details Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-xl md:max-w-2xl max-h-[85vh] overflow-y-auto">
             {selectedClient && (
               <>
                 <DialogHeader>
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-base sm:text-lg md:text-xl">
                       {selectedClient.firstName?.charAt(0)}{selectedClient.lastName?.charAt(0)}
                     </div>
                     <div>
-                      <DialogTitle className="text-2xl font-bold text-slate-900">
+                      <DialogTitle className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900">
                         {selectedClient.firstName} {selectedClient.lastName}
                       </DialogTitle>
                       <div className="flex items-center gap-2 mt-1">
